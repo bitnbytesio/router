@@ -1,0 +1,24 @@
+{
+    "name": "artisangang/router",
+    "description": "Fast and simple request router for PHP7",
+    "keywords": ["routing", "router", "fast", "simple"],
+    "license": "MIT",
+    "authors": [
+        {
+          "name": "Harcharan Singh",
+          "email": "artisangang@gmail.com"
+        }
+     ],
+    "autoload": {
+        "psr-4": {
+            "Router\\": "src/"
+        },
+        "files": []
+    },
+    "require": {
+        "php": ">=7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.2"
+    }
+}

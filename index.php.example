@@ -1,0 +1,83 @@
+<?php
+
+declare(strict_types=1);
+
+require 'vendor/autoload.php';
+
+use Router\Manager;
+use Router\Storage\{FileStorage,RedisStorage,MemoryStorage};
+
+$storage = new FileStorage(__DIR__);
+
+
+
+$start = time(true);
+
+define('PUBLIC_DIR', dirname(__FILE__));
+
+$routeManager = new Manager;
+$routeManager->storage( $storage );
+$routeManager->unlock();
+
+
+class IndexController {
+
+    public function index() {
+
+    }
+
+    public function method() {
+
+    }
+
+}
+
+$p = $routeManager->router();
+
+var_dump(get_class($p));
+
+$p->use('GET /product/', 'IndexController@productIndex');
+$p->use('GET /product/:id', 'IndexController@productSingle');
+$p->use('POST /product', 'IndexController.productCreate');
+$p->use('PUT /product/:id', 'IndexController.productUpdate');
+$p->use('PATCH /product/:id', 'IndexController.productPatch');
+$p->use('DELETE /product/:id', 'IndexController.productDelete');
+
+$c = $routeManager->router();
+
+$c->use('GET /category', 'IndexController.categoryIndex');
+$c->use('POST /category', 'IndexController.categoryCreate');
+$c->use('PUT /category/:id', 'IndexController.categoryUpdate');
+$c->use('PATCH /category/:id', 'IndexController.categoryPatch');
+$c->use('DELETE /category/:id', 'IndexController.categoryDelete');
+
+$c->get('/shop', 'IndexController.shopIndex');
+$c->post('/shop', 'IndexController.shopCreate');
+$c->put('/shop/:id', 'IndexController.shopUpdate');
+$c->patch('/shop/:id', 'IndexController.shopPatch');
+$c->delete('/shop/:id', 'deleteShop');
+
+
+$r = $routeManager->router('v1');
+
+//$r->use('ROUTER', $p, $c);
+
+$r->child($p, $c);
+
+
+$a = $routeManager->router('lyft');
+$a->child($r);
+
+
+$request = $routeManager->match($a);
+
+echo $routeManager->requestUri;
+
+if ($request) {
+    var_dump($request->params($routeManager->requestUri));
+}
+
+var_dump($request);
+
+
+echo microtime(true) - $start;
